@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true">
+    <generated />
+  </component>
+  <component name="CMakeSettings">
+    <configurations>
+      <configuration PROFILE_NAME="Debug" CONFIG_NAME="Debug" />
+    </configurations>
+  </component>
+  <component name="CargoProjects">
+    <cargoProject FILE="$PROJECT_DIR$/Cargo.toml" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="527b3bb4-67e0-4f5c-9e5e-0b147723eb79" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/examples/image_file.rs" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Rust File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MacroExpansionManager">
+    <option name="directoryName" value="uksx8as7" />
+  </component>
+  <component name="ProjectId" id="1gszTLXhmHGlZaiTcmdj9LFA8Mt" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="cf.first.check.clang-format" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="org.rust.cargo.project.model.PROJECT_DISCOVERY" value="true" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.cidr.embedded.config" />
+  </component>
+  <component name="RunManager">
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Run image_file" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
+      <option name="channel" value="DEFAULT" />
+      <option name="command" value="run --package reduced-color --example image_file" />
+      <option name="allFeatures" value="false" />
+      <option name="emulateTerminal" value="false" />
+      <option name="backtrace" value="SHORT" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
+      <envs />
+      <method v="2">
+        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Cargo Command.Run image_file" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="RustProjectSettings">
+    <option name="toolchainHomeDirectory" value="$USER_HOME$/.cargo/bin" />
+    <option name="version" value="2" />
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="527b3bb4-67e0-4f5c-9e5e-0b147723eb79" name="Default Changelist" comment="" />
+      <created>1598918094262</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1598918094262</updated>
+      <workItem from="1598918095493" duration="17242000" />
+      <workItem from="1599138041600" duration="3156000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="744" y="330" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1598967898535">
+      <screen x="0" y="23" width="2048" height="1204" />
+    </state>
+    <state x="744" y="330" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.23.2048.1204@0.23.2048.1204" timestamp="1598967898535" />
+    <state width="1638" height="315" key="GridCell.Tab.0.bottom" timestamp="1599141178350">
+      <screen x="0" y="23" width="1680" height="974" />
+    </state>
+    <state width="2006" height="242" key="GridCell.Tab.0.bottom/0.0.2048.1280@0.0.2048.1280" timestamp="1598970874179" />
+    <state width="1638" height="315" key="GridCell.Tab.0.bottom/0.23.1680.974@0.23.1680.974" timestamp="1599141178350" />
+    <state width="1638" height="253" key="GridCell.Tab.0.bottom/0.23.2048.1204@0.23.2048.1204" timestamp="1599135553466" />
+    <state width="1638" height="315" key="GridCell.Tab.0.center" timestamp="1599141178348">
+      <screen x="0" y="23" width="1680" height="974" />
+    </state>
+    <state width="2006" height="242" key="GridCell.Tab.0.center/0.0.2048.1280@0.0.2048.1280" timestamp="1598970874178" />
+    <state width="1638" height="315" key="GridCell.Tab.0.center/0.23.1680.974@0.23.1680.974" timestamp="1599141178348" />
+    <state width="1638" height="253" key="GridCell.Tab.0.center/0.23.2048.1204@0.23.2048.1204" timestamp="1599135553463" />
+    <state width="1638" height="315" key="GridCell.Tab.0.left" timestamp="1599141178346">
+      <screen x="0" y="23" width="1680" height="974" />
+    </state>
+    <state width="2006" height="242" key="GridCell.Tab.0.left/0.0.2048.1280@0.0.2048.1280" timestamp="1598970874177" />
+    <state width="1638" height="315" key="GridCell.Tab.0.left/0.23.1680.974@0.23.1680.974" timestamp="1599141178346" />
+    <state width="1638" height="253" key="GridCell.Tab.0.left/0.23.2048.1204@0.23.2048.1204" timestamp="1599135553462" />
+    <state width="1638" height="315" key="GridCell.Tab.0.right" timestamp="1599141178349">
+      <screen x="0" y="23" width="1680" height="974" />
+    </state>
+    <state width="2006" height="242" key="GridCell.Tab.0.right/0.0.2048.1280@0.0.2048.1280" timestamp="1598970874179" />
+    <state width="1638" height="315" key="GridCell.Tab.0.right/0.23.1680.974@0.23.1680.974" timestamp="1599141178349" />
+    <state width="1638" height="253" key="GridCell.Tab.0.right/0.23.2048.1204@0.23.2048.1204" timestamp="1599135553464" />
+    <state width="1638" height="315" key="GridCell.Tab.1.bottom" timestamp="1599141178356">
+      <screen x="0" y="23" width="1680" height="974" />
+    </state>
+    <state width="1638" height="315" key="GridCell.Tab.1.bottom/0.23.1680.974@0.23.1680.974" timestamp="1599141178356" />
+    <state width="1638" height="340" key="GridCell.Tab.1.bottom/0.23.2048.1204@0.23.2048.1204" timestamp="1599135517863" />
+    <state width="1638" height="315" key="GridCell.Tab.1.center" timestamp="1599141178354">
+      <screen x="0" y="23" width="1680" height="974" />
+    </state>
+    <state width="1638" height="315" key="GridCell.Tab.1.center/0.23.1680.974@0.23.1680.974" timestamp="1599141178354" />
+    <state width="1638" height="340" key="GridCell.Tab.1.center/0.23.2048.1204@0.23.2048.1204" timestamp="1599135517860" />
+    <state width="1638" height="315" key="GridCell.Tab.1.left" timestamp="1599141178352">
+      <screen x="0" y="23" width="1680" height="974" />
+    </state>
+    <state width="1638" height="315" key="GridCell.Tab.1.left/0.23.1680.974@0.23.1680.974" timestamp="1599141178352" />
+    <state width="1638" height="340" key="GridCell.Tab.1.left/0.23.2048.1204@0.23.2048.1204" timestamp="1599135517858" />
+    <state width="1638" height="315" key="GridCell.Tab.1.right" timestamp="1599141178355">
+      <screen x="0" y="23" width="1680" height="974" />
+    </state>
+    <state width="1638" height="315" key="GridCell.Tab.1.right/0.23.1680.974@0.23.1680.974" timestamp="1599141178355" />
+    <state width="1638" height="340" key="GridCell.Tab.1.right/0.23.2048.1204@0.23.2048.1204" timestamp="1599135517861" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/src/lib.rs</url>
+          <line>222</line>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>
