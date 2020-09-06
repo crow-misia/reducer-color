@@ -2,8 +2,8 @@ use std::cmp::{max, min};
 use std::collections::{HashMap};
 
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
-pub struct Pixel {
-    pub rgb: u32,
+pub struct ColorNode {
+    pub a: u8,
     pub r: u8,
     pub g: u8,
     pub b: u8,
@@ -25,20 +25,42 @@ enum ColorDimension {
     Blue,
 }
 
-impl Pixel {
-    fn new_rgb(rgb: u32, uses: usize) -> Pixel {
-        Pixel {
-            rgb,
-            r: (rgb & 0xFF) as u8,
-            g: ((rgb & 0xFF00) >> 8) as u8,
-            b: ((rgb & 0xFF0000) >> 16) as u8,
-            uses,
-        }
+impl ColorNode {
+    #[inline]
+    pub fn convert_argb_to_u32(a: u8, r: u8, g: u8, b: u8) -> u32 {
+        (a as u32) << 24 | (r as u32) << 16 | (g as u32) << 8 | b as u32
     }
 
-    fn new_colors(r: u8, g: u8, b: u8, uses: usize) -> Pixel {
-        Pixel {
-            rgb: ((r as u32 & 0xff) << 16) | ((g as u32 & 0xff) << 8) | b as u32 & 0xff,
+    #[inline]
+    pub fn convert_u32_to_argb(argb: u32) -> (u8, u8, u8, u8) {
+        let a = ((argb & 0xff000000) >> 24) as u8;
+        let r = ((argb & 0xff0000) >> 16) as u8;
+        let g = ((argb & 0xff00) >> 8) as u8;
+        let b = (argb & 0xff) as u8;
+        (a, r, g, b)
+    }
+
+    pub fn from_argb(argb: u32, uses: usize) -> ColorNode {
+        let (a, r, g, b) = ColorNode::convert_u32_to_argb(argb);
+        ColorNode { a, r, g, b, uses, }
+    }
+
+    pub fn from_abgr(abgr: u32, uses: usize) -> ColorNode {
+        let (a, b, g, r) = ColorNode::convert_u32_to_argb(abgr);
+        ColorNode { a, r, g, b, uses, }
+    }
+
+    pub fn to_argb(&self) -> u32 {
+        ColorNode::convert_argb_to_u32(self.a, self.r, self.g, self.b)
+    }
+
+    pub fn to_abgr(&self) -> u32 {
+        ColorNode::convert_argb_to_u32(self.a, self.b, self.g, self.r)
+    }
+
+    pub fn from_color(a: u8, r: u8, g: u8, b: u8, uses: usize) -> ColorNode {
+        ColorNode {
+            a,
             r,
             g,
             b,
@@ -47,8 +69,6 @@ impl Pixel {
     }
 
     fn distance2(&self, r: u8, g: u8, b: u8) -> i32 {
-        // returns the squared distance between (red, grn, blu)
-        // and this this color
         let dr = self.r as i32 - r as i32;
         let dg = self.g as i32 - g as i32;
         let db = self.b as i32 - b as i32;
@@ -62,7 +82,6 @@ impl Box {
             lower,
             upper,
             level,
-
             ..Default::default()
         }
     }
@@ -71,7 +90,7 @@ impl Box {
         self.upper - self.lower
     }
 
-    fn split_box(&mut self, pixels: &mut Vec<Pixel>) -> Option<Box> {
+    fn split_box(&mut self, pixels: &mut Vec<ColorNode>) -> Option<Box> {
         if self.color_count() < 2 {
             None
         } else {
@@ -88,7 +107,7 @@ impl Box {
         }
     }
 
-    fn get_longest_color_dimension(&mut self, pixels: &Vec<Pixel>) -> ColorDimension {
+    fn get_longest_color_dimension(&mut self, pixels: &Vec<ColorNode>) -> ColorDimension {
         let mut min_r = 255;
         let mut max_r = 0;
         let mut min_g = 255;
@@ -126,7 +145,7 @@ impl Box {
         }
     }
 
-    fn find_median(&self, dim: ColorDimension, pixels: &mut Vec<Pixel>) -> usize {
+    fn find_median(&self, dim: ColorDimension, pixels: &mut Vec<ColorNode>) -> usize {
         match dim {
             ColorDimension::Red => pixels[self.lower..(self.upper + 1)].sort_by(|a, b| a.r.cmp(&b.r)),
             ColorDimension::Green => pixels[self.lower..(self.upper + 1)].sort_by(|a, b| a.g.cmp(&b.g)),
@@ -144,86 +163,69 @@ impl Box {
         self.lower
     }
 
-    fn get_average_color(&self, pixels: &Vec<Pixel>) -> Pixel {
+    fn get_average_color(&self, pixels: &Vec<ColorNode>) -> ColorNode {
+        let mut a_sum = 0;
         let mut r_sum = 0;
         let mut g_sum = 0;
         let mut b_sum = 0;
         let mut n = 0usize;
         for pixel in pixels[self.lower..(self.upper + 1)].iter() {
             let cnt = pixel.uses;
+            a_sum += cnt * pixel.a as usize;
             r_sum += cnt * pixel.r as usize;
             g_sum += cnt * pixel.g as usize;
             b_sum += cnt * pixel.b as usize;
             n += cnt;
         }
-        // let nd = n as f64;
-        let avg_red = (0.5 + r_sum as f64 / n as f64) as u8;
-        let avg_grn = (0.5 + g_sum as f64 / n as f64) as u8;
-        let avg_blu = (0.5 + b_sum as f64 / n as f64) as u8;
-        Pixel::new_colors(avg_red, avg_grn, avg_blu, n)
+        let nf = n as f64;
+        let avg_a = (0.5 + a_sum as f64 / nf) as u8;
+        let avg_r = (0.5 + r_sum as f64 / nf) as u8;
+        let avg_g = (0.5 + g_sum as f64 / nf) as u8;
+        let avg_b = (0.5 + b_sum as f64 / nf) as u8;
+        ColorNode::from_color(avg_a, avg_r, avg_g, avg_b, n)
     }
 }
 
-pub struct MedianCut {
-    quant_colors: Vec<Pixel>,
-}
+pub struct MedianCut { }
 
 impl MedianCut {
-    pub fn from_pixels_u8_rgba(pixels: &[u8], k_max: u32) -> MedianCut {
+    pub fn from_pixels_u8_rgba(pixels: &[u8], k_max: u32) -> Vec<ColorNode> {
         let pixels = unsafe { ::std::slice::from_raw_parts::<u32>(::std::mem::transmute(&pixels[0]), pixels.len() / 4) };
 
         MedianCut::from_pixels_u32_rgba(pixels, k_max)
     }
 
-    pub fn from_pixels_u32_rgba(pixels: &[u32], k_max: u32) -> MedianCut {
-        let mut m = MedianCut {
-            quant_colors: Vec::new(),
-        };
+    pub fn from_pixels_u32_rgba(pixels: &[u32], k_max: u32) -> Vec<ColorNode> {
+        let mut quant_colors = MedianCut::find_representative_colors(&pixels, k_max);
+        quant_colors.sort_by(|a, b| b.uses.cmp(&a.uses));
 
-        m.quant_colors = m.find_representative_colors(&pixels, k_max);
-        m.quant_colors.sort_by(|a, b| b.uses.cmp(&a.uses));
-
-        m
+        quant_colors
     }
 
-    pub fn get_quantized_colors(&self) -> &Vec<Pixel> {
-        &self.quant_colors
-    }
-
-    pub fn quantize_image_u8_rgba(&self, pixels: &[u8]) -> &[u8] {
-        let new_pixels = unsafe { ::std::slice::from_raw_parts::<u32>(::std::mem::transmute(&pixels[0]), pixels.len() / 4) };
-
-        let quant_pixels = self.quantize_image_u32_rgba(new_pixels.to_vec());
-        unsafe { ::std::slice::from_raw_parts::<u8>(::std::mem::transmute(&quant_pixels[0]), quant_pixels.len() * 4) }
-    }
-
-    pub fn quantize_image_u32_rgba(&self, pixels: Vec<u32>) -> Vec<u32> {
-        let mut quant_pixels = pixels.clone();
-        for (i, &pixel) in pixels.iter().enumerate() {
-            quant_pixels[i] = self.find_closest_color(pixel).rgb | 0xFF000000;
+    pub fn quantize_image_from(colors: &Vec<ColorNode>, pixels: &Vec<u32>) -> Vec<u32> {
+        let len = pixels.len();
+        let mut quant_pixels = Vec::<u32>::with_capacity(len);
+        unsafe {
+            quant_pixels.set_len(len);
+        }
+        for (i, color) in pixels.iter().enumerate() {
+            quant_pixels[i] = MedianCut::find_closest_color(colors, *color);
         }
         quant_pixels
     }
 
-    fn create_histogram(&mut self, pixels: &[u32]) -> HashMap<u32, usize> {
-        let n = pixels.len();
-        let mut histogram = HashMap::new();
-        for i in 0..n {
-            let count = histogram.entry(0xFFFFFF & pixels[i]).or_insert(0);
-            *count += 1;
+    pub fn create_histogram(pixels: &[u32]) -> Vec<ColorNode> {
+        let mut count: HashMap<u32, usize> = HashMap::new();
+        for &pixel in pixels {
+            *count.entry(pixel).or_insert(0) += 1;
         }
-        histogram
+        count.into_iter().map(|(p, c)| ColorNode::from_abgr(p, c)).collect()
     }
 
-    fn find_representative_colors(&mut self, pixels: &[u32], k_max: u32) -> Vec<Pixel> {
+    fn find_representative_colors(pixels: &[u32], k_max: u32) -> Vec<ColorNode> {
         // create color histogram
-        let histogram = self.create_histogram(pixels);
-        let color_num = histogram.len();
-
-        let mut pixels = Vec::with_capacity(color_num);
-        for (&rgb, &cnt) in &histogram {
-            pixels.push(Pixel::new_rgb(rgb, cnt));
-        }
+        let mut pixels: Vec<_> = MedianCut::create_histogram(pixels);
+        let color_num = pixels.len();
 
         let r_cols = if color_num <= k_max as usize {
             // image has fewer colors than k_max
@@ -235,7 +237,7 @@ impl MedianCut {
             let mut k = 1;
             let mut done = false;
             while k < k_max && !done {
-                let new_box = if let Some(next_box) = self.find_box_to_split(&mut color_set) {
+                let new_box = if let Some(next_box) = MedianCut::find_box_to_split(&mut color_set) {
                     next_box.split_box(&mut pixels)
                 } else {
                     done = true;
@@ -248,45 +250,38 @@ impl MedianCut {
                 }
             }
 
-            self.average_colors(&color_set, &pixels)
+            MedianCut::average_colors(&color_set, &pixels)
         };
         r_cols
     }
 
-    fn find_closest_color(&self, rgb: u32) -> Pixel {
-        let idx = self.find_closest_color_index(rgb);
-        self.quant_colors[idx]
-    }
-
-    fn find_closest_color_index(&self, rgb: u32) -> usize {
-        let r = ((rgb & 0xFF0000) >> 16) as u8;
-        let g = ((rgb & 0xFF00) >> 8) as u8;
-        let b = (rgb & 0xFF) as u8;
+    fn find_closest_color(colors: &Vec<ColorNode>, rgb: u32) -> u32 {
+        let r = (rgb & 0xff) as u8;
+        let g = ((rgb & 0xff00) >> 8) as u8;
+        let b = ((rgb & 0xff0000) >> 16) as u8;
         let mut min_idx = 0;
         let mut min_distance = ::std::i32::MAX;
-        for (i, &pixel) in self.quant_colors.iter().enumerate() {
-            let d = pixel.distance2(r, g, b);
+        for (i, &color) in colors.iter().enumerate() {
+            let d = color.distance2(r, g, b);
             if d < min_distance {
                 min_distance = d;
                 min_idx = i;
             }
         }
-        min_idx
+        colors[min_idx].to_abgr()
     }
 
-    fn average_colors(&mut self, boxees: &Vec<Box>, pixels: &Vec<Pixel>) -> Vec<Pixel> {
-        let n = boxees.len();
+    fn average_colors(boxes: &Vec<Box>, pixels: &Vec<ColorNode>) -> Vec<ColorNode> {
+        let n = boxes.len();
         let mut avg_colors = Vec::with_capacity(n);
-        for b in boxees {
+        for b in boxes {
             avg_colors.push(b.get_average_color(&pixels));
         }
         return avg_colors;
     }
 
-    fn find_box_to_split<'a>(&self, boxes: &'a mut Vec<Box>) -> Option<&'a mut Box> {
+    fn find_box_to_split(boxes: &mut Vec<Box>) -> Option<&mut Box> {
         let mut box_to_split = None;
-        // from the set of splitable color boxes
-        // select the one with the minimum level
         let mut min_level = ::std::usize::MAX;
         for b in boxes {
             if b.color_count() >= 2 {
