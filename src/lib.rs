@@ -1,7 +1,7 @@
 use std::cmp::{max, min};
 use std::collections::{HashMap};
 
-#[derive(Debug, Clone, Copy, PartialEq, Default)]
+#[derive(Debug)]
 pub struct ColorNode {
     pub a: u8,
     pub r: u8,
@@ -10,7 +10,7 @@ pub struct ColorNode {
     pub uses: usize,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Default)]
+#[derive(Debug)]
 struct Box {
     lower: usize,
     upper: usize,
@@ -18,7 +18,6 @@ struct Box {
     level: usize,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq)]
 enum ColorDimension {
     Red,
     Green,
@@ -82,7 +81,7 @@ impl Box {
             lower,
             upper,
             level,
-            ..Default::default()
+            count: 0,
         }
     }
 
@@ -117,7 +116,7 @@ impl Box {
         let mut count = 0;
 
         for i in self.lower..self.upper {
-            let pixel = pixels[i];
+            let pixel = &pixels[i];
             count += pixel.uses;
             let r = pixel.r as i32;
             let g = pixel.g as i32;
@@ -229,7 +228,7 @@ impl MedianCut {
 
         let r_cols = if color_num <= k_max as usize {
             // image has fewer colors than k_max
-            pixels.clone()
+            pixels
         } else {
             let initial_box = Box::new(0, color_num - 1, 0);
             let mut color_set = Vec::new();
@@ -261,7 +260,7 @@ impl MedianCut {
         let b = ((rgb & 0xff0000) >> 16) as u8;
         let mut min_idx = 0;
         let mut min_distance = ::std::i32::MAX;
-        for (i, &color) in colors.iter().enumerate() {
+        for (i, color) in colors.iter().enumerate() {
             let d = color.distance2(r, g, b);
             if d < min_distance {
                 min_distance = d;

@@ -23,8 +23,8 @@ fn main() {
 }
 
 fn convert_to_pixel(pixel: &image::Rgba<u8>) -> u32 {
-    let (b, g, r, a) = pixel.channels4();
-    reduced_color::ColorNode::convert_argb_to_u32(a, r, g, b)
+    let rgba = pixel.channels();
+    reduced_color::ColorNode::convert_argb_to_u32(rgba[3], rgba[2], rgba[1], rgba[0])
 }
 
 fn convert_from_pixel(pixel: &u32) -> Vec<u8> {
@@ -35,11 +35,11 @@ fn convert_from_pixel(pixel: &u32) -> Vec<u8> {
 fn process_image(file: &str) {
     println!("Reading image {}", file);
 
-    let img = image::load(BufReader::new(File::open(file).unwrap()), image::ImageFormat::Png).unwrap().to_rgba();
+    let img = image::load(BufReader::new(File::open(file).unwrap()), image::ImageFormat::Png).unwrap().to_rgba8();
 
     // Here we extract the quantized colors from the image.
     // We need no more than 16 colors (QUANT_SIZE).
-    let mut colors = MedianCut::from_pixels_u8_rgba(&img, QUANT_SIZE);
+    let colors = MedianCut::from_pixels_u8_rgba(&img, QUANT_SIZE);
 
     // A `Vec` of colors, descendantely sorted by usage frequency
     // let qc = mcq.get_quantized_colors();
@@ -53,7 +53,7 @@ fn process_image(file: &str) {
     // Here we will demonstrate the extracted colors by generating the image
     // that consists of both original image and a resulted palette.
     // =============================================================================================
-    let img = image::load(BufReader::new(File::open(file).unwrap()), image::ImageFormat::Png).unwrap().to_rgba();
+    let img = image::load(BufReader::new(File::open(file).unwrap()), image::ImageFormat::Png).unwrap().to_rgba8();
 
     let (ix, iy) = img.dimensions();
 
