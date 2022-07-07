@@ -2,6 +2,7 @@ use std::cmp::{max, min};
 use std::collections::HashMap;
 use std::hash::{Hash, Hasher};
 use image::{Pixel, Rgba, RgbaImage};
+use crate::error_diffusion::ErrorDiffusion;
 
 enum ColorDimension {
     Red,
@@ -216,10 +217,29 @@ impl MedianCut {
     }
 
     pub fn quantize_image_from(&self, image: &mut RgbaImage) {
-        for pixel in image.pixels_mut() {
-            let rgba = pixel.channels();
-            let color = self.find_closest_color(&ColorNode::from(rgba[0], rgba[1], rgba[2], 0));
-            *pixel = Rgba::from([color.red, color.green, color.blue, 255]);
+        let mut error_diffusion_red = ErrorDiffusion::new(image.width());
+        let mut error_diffusion_green = ErrorDiffusion::new(image.width());
+        let mut error_diffusion_blue = ErrorDiffusion::new(image.width());
+
+        for row in image.rows_mut() {
+            for pixel in row {
+                let rgba = pixel.channels();
+                let org_red = rgba[0];
+                let org_green = rgba[1];
+                let org_blue = rgba[2];
+                let adjust_red = error_diffusion_red.adjust(org_red);
+                let adjust_green = error_diffusion_green.adjust(org_green);
+                let adjust_blue = error_diffusion_blue.adjust(org_blue);
+                let color = self.find_closest_color(&ColorNode::from(adjust_red, adjust_green, adjust_blue, 0));
+                error_diffusion_red.calculate(org_red, color.red);
+                error_diffusion_green.calculate(org_green, color.green);
+                error_diffusion_blue.calculate(org_blue, color.blue);
+                *pixel = Rgba::from([color.red, color.green, color.blue, 255])
+            }
+
+            error_diffusion_red.next_row();
+            error_diffusion_green.next_row();
+            error_diffusion_blue.next_row();
         }
     }
 
