@@ -1,6 +1,5 @@
 use std::cmp::{max, min};
 use std::collections::HashMap;
-use std::hash::{Hash, Hasher};
 use image::{Pixel, Rgba, RgbaImage};
 use crate::error_diffusion::ErrorDiffusion;
 
@@ -19,26 +18,14 @@ pub struct ColorNode {
     pub count: usize,
 }
 
-impl Hash for ColorNode {
-    fn hash<H: Hasher>(&self, state: &mut H) {
-        state.write_u32(self.rgb)
-    }
-}
-
-impl PartialEq for ColorNode {
-    fn eq(&self, other: &Self) -> bool {
-        self.rgb == other.rgb
-    }
-}
-
 impl ColorNode {
     #[inline]
     pub fn from_rgb(rgb: u32, count: usize) -> ColorNode {
         ColorNode {
             rgb,
-            blue: (rgb & 0xff0000 >> 16) as u8,
-            green: (rgb & 0xff00 >> 8) as u8,
-            red: (rgb & 0xff) as u8,
+            red: ((rgb & 0xff0000) >> 16) as u8,
+            green: ((rgb & 0xff00) >> 8) as u8,
+            blue: (rgb & 0xff) as u8,
             count,
         }
     }
@@ -47,9 +34,9 @@ impl ColorNode {
     pub fn from(red: u8, green: u8, blue: u8, count: usize) -> ColorNode {
         ColorNode {
             rgb: ColorNode::convert_rgb_to_u32(red, green, blue),
-            blue,
-            green,
             red,
+            green,
+            blue,
             count,
         }
     }
@@ -248,7 +235,7 @@ impl MedianCut {
         image.pixels()
             .for_each(|pixel| {
                 let channels = pixel.channels();
-                let color = ColorNode::convert_rgb_to_u32(channels[2], channels[1], channels[0]);
+                let color = ColorNode::convert_rgb_to_u32(channels[0], channels[1], channels[2]);
                 *count.entry(color).or_insert(0) += 1;
             });
         count.into_iter().map(|(p, c)| ColorNode::from_rgb(p, c)).collect()
